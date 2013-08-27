@@ -20,7 +20,7 @@ class Debug_Bar_Remote_Requests_Panel extends Debug_Bar_Panel {
 				<?php foreach ( Debug_Bar_Remote_Requests()->log as $i => $log ) : ?>
 					<li>
 						<?php echo $log['args']['method'] ?> <?php echo $log['url'] ?>
-						<?php if ( isset( $log['response']['response']['code'], $log['response']['response']['message'] ) ) : ?>
+						<?php if ( is_array( $log['response'] ) && isset( $log['response']['response']['code'], $log['response']['response']['message'] ) ) : ?>
 							<br />Response: <?php echo "{$log['response']['response']['code']} {$log['response']['response']['message']}" ?>
 						<?php else : ?>
 							<br />No response code found!
