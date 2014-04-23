@@ -1,9 +1,9 @@
 <?php
 /*
 	Plugin Name: Debug Bar Remote Requests
-	Plugin URI: http://www.alleyinteractive.com/
+	Plugin URI: http://github.com/alleyinteractive.com/debug-bar-remote-requests
 	Description: A simple add-on for Debug Bar that logs and profiles all remote requests made using the HTTP Request API
-	Version: 0.1
+	Version: 0.1.1
 	Author: Matthew Boynes
 	Author URI: http://www.alleyinteractive.com/
 */
@@ -61,12 +61,16 @@ class Debug_Bar_Remote_Requests {
 	}
 
 	public function start( $false, $args, $url ) {
-		$this->log[] = array(
+		$log = array(
 			'url' => $url,
-			'args' => $args,
+			'method' => ! empty( $args['method'] ) ? $args['method'] : '',
 			'start' => microtime( true ),
 			'backtrace' => wp_debug_backtrace_summary( __CLASS__ )
 		);
+		if ( isset( $_GET['dbrr_full'] ) ) {
+			$log['args'] = $args;
+		}
+		$this->log[] = $log;
 		return $false;
 	}
 
@@ -76,9 +80,13 @@ class Debug_Bar_Remote_Requests {
 			$i--;
 			if ( isset( $this->log[ $i ]['url'] ) && $this->log[ $i ]['url'] == $url ) {
 				$this->log[ $i ]['end'] = microtime( true );
-				$this->log[ $i ]['response'] = $response;
-				$this->log[ $i ]['final_args'] = $args;
-				$this->log[ $i ]['class'] = $class;
+				$this->log[ $i ]['code'] = ! empty( $response['response']['code'] ) ? $response['response']['code'] : '';
+				$this->log[ $i ]['message'] = ! empty( $response['response']['message'] ) ? $response['response']['message'] : '';
+				if ( isset( $_GET['dbrr_full'] ) ) {
+					$this->log[ $i ]['response'] = $response;
+					$this->log[ $i ]['final_args'] = $args;
+					$this->log[ $i ]['class'] = $class;
+				}
 				$this->total_time += ( $this->log[ $i ]['end'] - $this->log[ $i ]['start'] );
 				return;
 			}
@@ -86,7 +94,7 @@ class Debug_Bar_Remote_Requests {
 
 		# We should never end up here
 		$this->log[] = array(
-			'error' => 'Received a response without a record of request for the URL: ' . $url
+			'error' => sprintf( __( 'Received a response without a record of request for the URL: %s', 'debug-bar-remote-requests' ), $url )
 		);
 	}
 

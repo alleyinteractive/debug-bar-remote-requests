@@ -13,17 +13,17 @@ class Debug_Bar_Remote_Requests_Panel extends Debug_Bar_Panel {
 	public function render() {
 		?>
 		<div id="debug-bar-remote-requests">
-			<h2><span>Total Requests:</span> <?php echo count( Debug_Bar_Remote_Requests()->log ) ?></h2>
-			<h2><span>Total Request Time:</span> <?php echo Debug_Bar_Remote_Requests()->time() ?></h2>
+			<h2><span><?php _e( 'Total Requests:', 'debug-bar-remote-requests' ); ?></span> <?php echo absint( count( Debug_Bar_Remote_Requests()->log ) ) ?></h2>
+			<h2><span><?php _e( 'Total Request Time:', 'debug-bar-remote-requests' ); ?></span> <?php echo esc_html( Debug_Bar_Remote_Requests()->time() ) ?></h2>
 
 			<ol class="remote-requests-list wpd-queries">
 				<?php foreach ( Debug_Bar_Remote_Requests()->log as $i => $log ) : ?>
 					<li>
-						<?php echo $log['args']['method'] ?> <?php echo $log['url'] ?>
-						<?php if ( is_array( $log['response'] ) && isset( $log['response']['response']['code'], $log['response']['response']['message'] ) ) : ?>
-							<br />Response: <?php echo "{$log['response']['response']['code']} {$log['response']['response']['message']}" ?>
+						<?php echo esc_html( $log['method'] ) ?> <?php echo esc_html( $log['url'] ) ?>
+						<?php if ( isset( $log['code'], $log['message'] ) ) : ?>
+							<br /><?php printf( __( 'Response: %s', 'debug-bar-remote-requests' ), esc_html( "{$log['code']} {$log['message']}" ) ) ?>
 						<?php else : ?>
-							<br />No response code found!
+							<br /><?php _e( 'No response code found!', 'debug-bar-remote-requests' ); ?>
 						<?php endif ?>
 						<div class="qdebug">
 							<?php
@@ -31,27 +31,27 @@ class Debug_Bar_Remote_Requests_Panel extends Debug_Bar_Panel {
 							$debug = array_diff( $debug, array( 'require_once', 'require', 'include_once', 'include' ) );
 							$debug = implode( ', ', $debug );
 							$debug = str_replace( array( 'do_action, call_user_func_array' ), array( 'do_action' ), $debug );
-							echo "$debug";
+							echo esc_html( $debug );
 							?>
-							<span>#<?php echo $i + 1 ?> (<?php echo Debug_Bar_Remote_Requests()->time( $log ) ?>)</span>
+							<span>#<?php echo intval( $i ) + 1 ?> (<?php echo esc_html( Debug_Bar_Remote_Requests()->time( $log ) ) ?>)</span>
 						</div>
 						<?php if ( isset( $_GET['dbrr_full'] ) ) : ?>
 							<div class="qdebug">
 								<p>
-									<strong>Pre-Request Args:</strong>
-									<pre><?php print_r( $log['args'] ) ?></pre>
+									<strong><?php _e( 'Pre-Request Args:', 'debug-bar-remote-requests' ); ?></strong>
+									<pre><?php echo esc_html( print_r( $log['args'], 1 ) ) ?></pre>
 								</p>
 								<p>
-									<strong>Post-Request Args:</strong>
-									<pre><?php print_r( $log['final_args'] ) ?></pre>
+									<strong><?php _e( 'Post-Request Args:', 'debug-bar-remote-requests' ); ?></strong>
+									<pre><?php echo esc_html( print_r( $log['final_args'], 1 ) ) ?></pre>
 								</p>
 								<p>
-									<strong>Response:</strong>
-									<pre><?php print_r( $log['response'] ) ?></pre>
+									<strong><?php _e( 'Response:', 'debug-bar-remote-requests' ); ?></strong>
+									<pre><?php echo esc_html( print_r( $log['response'], 1 ) ) ?></pre>
 								</p>
 								<p>
-									<strong>HTTP Class:</strong>
-									<pre><?php echo $log['class'] ?></pre>
+									<strong><?php _e( 'HTTP Class:', 'debug-bar-remote-requests' ); ?></strong>
+									<pre><?php echo esc_html( $log['class'] ) ?></pre>
 								</p>
 							</div>
 						<?php endif ?>
