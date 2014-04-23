@@ -2,8 +2,8 @@
 Contributors: mboynes, alleyinteractive
 Tags: debug bar, debug, http api, remote requests, api, curl
 Requires at least: 3.5
-Tested up to: 3.6
-Stable tag: 0.1.1
+Tested up to: 3.9
+Stable tag: 0.1.2
 
 An add-on for the Debug Bar plugin that will log and profile remote requests made through the HTTP API
 
@@ -39,6 +39,9 @@ No.
 
 
 == Changelog ==
+
+= 0.1.2 =
+* Improved error handling
 
 = 0.1.1 =
 * Escaped all output

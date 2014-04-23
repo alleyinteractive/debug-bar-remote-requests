@@ -3,7 +3,7 @@
 	Plugin Name: Debug Bar Remote Requests
 	Plugin URI: http://github.com/alleyinteractive.com/debug-bar-remote-requests
 	Description: A simple add-on for Debug Bar that logs and profiles all remote requests made using the HTTP Request API
-	Version: 0.1.1
+	Version: 0.1.2
 	Author: Matthew Boynes
 	Author URI: http://www.alleyinteractive.com/
 */
@@ -80,8 +80,13 @@ class Debug_Bar_Remote_Requests {
 			$i--;
 			if ( isset( $this->log[ $i ]['url'] ) && $this->log[ $i ]['url'] == $url ) {
 				$this->log[ $i ]['end'] = microtime( true );
-				$this->log[ $i ]['code'] = ! empty( $response['response']['code'] ) ? $response['response']['code'] : '';
-				$this->log[ $i ]['message'] = ! empty( $response['response']['message'] ) ? $response['response']['message'] : '';
+				if ( is_wp_error( $response ) ) {
+					$this->log[ $i ]['code'] = $response->get_error_code();
+					$this->log[ $i ]['message'] = "Error: " . $response->get_error_message();
+				} else {
+					$this->log[ $i ]['code'] = ! empty( $response['response']['code'] ) ? $response['response']['code'] : '';
+					$this->log[ $i ]['message'] = ! empty( $response['response']['message'] ) ? $response['response']['message'] : '';
+				}
 				if ( isset( $_GET['dbrr_full'] ) ) {
 					$this->log[ $i ]['response'] = $response;
 					$this->log[ $i ]['final_args'] = $args;
